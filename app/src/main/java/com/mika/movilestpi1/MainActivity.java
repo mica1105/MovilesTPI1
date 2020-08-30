@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         validaPermisos();
     }
-
     private boolean validaPermisos() {
 
         if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
@@ -101,6 +100,11 @@ public class MainActivity extends AppCompatActivity {
         this.uc = new UsbConectado();
         registerReceiver(uc, new IntentFilter("android.hardware.usb.action.USB_STATE"));
         super.onResume();
+    }
+
+    public void llamando(){
+        String numero= "911";
+        Intent intent= new Intent(Intent.ACTION_CALL,Uri.parse("tel:"+numero));
     }
 
     @Override
