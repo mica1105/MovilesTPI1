@@ -25,94 +25,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        validaPermisos();
     }
 
-    private boolean validaPermisos() {
-
-        if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
-            return true;
-        }
-
-        if((checkSelfPermission(CALL_PHONE)== PackageManager.PERMISSION_GRANTED)){
-            return true;
-        }
-
-        if((shouldShowRequestPermissionRationale(CALL_PHONE))){
-            cargarDialogoRecomendacion();
-        }else{
-            requestPermissions(new String[]{CALL_PHONE},100);
-        }
-
-        return false;
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if(requestCode==100){
-            if(grantResults.length==2 && grantResults[0]==PackageManager.PERMISSION_GRANTED
-                    && grantResults[1]==PackageManager.PERMISSION_GRANTED){
-                llamando();
-            }else{
-                solicitarPermisosManual();
-            }
-        }
-
-    }
-
-    private void solicitarPermisosManual() {
-        final CharSequence[] opciones={"Si","No"};
-        final AlertDialog.Builder alertOpciones=new AlertDialog.Builder(MainActivity.this);
-        alertOpciones.setTitle("¿Desea configurar los permisos de forma manual?");
-        alertOpciones.setItems(opciones, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                if (opciones[i].equals("si")){
-                    Intent intent=new Intent();
-                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                    Uri uri=Uri.fromParts("package",getPackageName(),null);
-                    intent.setData(uri);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(getApplicationContext(),"Los permisos no fueron aceptados",Toast.LENGTH_SHORT).show();
-                    dialogInterface.dismiss();
-                }
-            }
-        });
-        alertOpciones.show();
-    }
-
-    private void cargarDialogoRecomendacion() {
-        AlertDialog.Builder dialogo=new AlertDialog.Builder(MainActivity.this);
-        dialogo.setTitle("Permisos Desactivados");
-        dialogo.setMessage("Debe aceptar los permisos para el correcto funcionamiento de la App");
-
-        dialogo.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                requestPermissions(new String[]{CALL_PHONE},100);
-            }
-        });
-        dialogo.show();
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
         this.uc = new UsbConectado();
         registerReceiver(uc, new IntentFilter("android.hardware.usb.action.USB_STATE"));
-        llamando();
-    }
-
-    public void llamando(){
-            String num= "911";
-            Intent intent = new Intent(Intent.ACTION_CALL);
-            intent.setData(Uri.parse("tel:" + num));
-            if (intent.resolveActivity(getPackageManager()) != null) {
-                startActivity(intent);
-            }
     }
 
     @Override
