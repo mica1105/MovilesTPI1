@@ -18,15 +18,16 @@ import static android.Manifest.permission.CALL_PHONE;
 
 public class UsbConectado extends BroadcastReceiver {
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
         // TODO: This method is called when the BroadcastReceiver is receiving
         // an Intent broadcast.
         Boolean b = intent.getBooleanExtra("connected", false);
         if(b){
-            Toast.makeText(context,"USB activado", Toast.LENGTH_LONG).show();
+            Toast.makeText(context,"USB Activado", Toast.LENGTH_LONG).show();
         }else {
-             Toast.makeText(context,"USB desactivado", Toast.LENGTH_LONG).show();
+             Toast.makeText(context,"USB Desactivado", Toast.LENGTH_LONG).show();
         }
     }
 

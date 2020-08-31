@@ -3,7 +3,9 @@ package com.mika.movilestpi1;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         validaPermisos();
     }
+
     private boolean validaPermisos() {
 
         if(Build.VERSION.SDK_INT<Build.VERSION_CODES.M){
@@ -51,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode==100){
             if(grantResults.length==2 && grantResults[0]==PackageManager.PERMISSION_GRANTED
                     && grantResults[1]==PackageManager.PERMISSION_GRANTED){
-                onResume();
+                llamando();
             }else{
                 solicitarPermisosManual();
             }
@@ -60,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void solicitarPermisosManual() {
-        final CharSequence[] opciones={"si","no"};
+        final CharSequence[] opciones={"Si","No"};
         final AlertDialog.Builder alertOpciones=new AlertDialog.Builder(MainActivity.this);
         alertOpciones.setTitle("¿Desea configurar los permisos de forma manual?");
         alertOpciones.setItems(opciones, new DialogInterface.OnClickListener() {
@@ -97,14 +100,19 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
         this.uc = new UsbConectado();
         registerReceiver(uc, new IntentFilter("android.hardware.usb.action.USB_STATE"));
-        super.onResume();
+        llamando();
     }
 
     public void llamando(){
-        String numero= "911";
-        Intent intent= new Intent(Intent.ACTION_CALL,Uri.parse("tel:"+numero));
+            String num= "911";
+            Intent intent = new Intent(Intent.ACTION_CALL);
+            intent.setData(Uri.parse("tel:" + num));
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
     }
 
     @Override
